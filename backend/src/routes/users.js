@@ -25,8 +25,40 @@ const userUpdateValidation = [
     .withMessage('isActive must be a boolean value')
 ];
 
-// Routes
-// Get all users (admin only)
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Get all users (Admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   username:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                   role:
+ *                     type: string
+ *                     enum: [admin, user, manager]
+ *                   isActive:
+ *                     type: boolean
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Not admin role
+ */
 router.get(
   '/',
   auth,
@@ -34,7 +66,22 @@ router.get(
   userController.getUsers
 );
 
-// Get user statistics (admin only)
+/**
+ * @swagger
+ * /api/users/stats:
+ *   get:
+ *     summary: Get user statistics (Admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User statistics
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Not admin role
+ */
 router.get(
   '/stats',
   auth,
@@ -42,7 +89,47 @@ router.get(
   userController.getUserStats
 );
 
-// Get specific user
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   get:
+ *     summary: Get specific user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: User details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                   enum: [admin, user, manager]
+ *                 isActive:
+ *                   type: boolean
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Access denied
+ *       404:
+ *         description: User not found
+ */
 router.get(
   '/:userId',
   auth,
@@ -50,7 +137,51 @@ router.get(
   userController.getUserById
 );
 
-// Update user
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   put:
+ *     summary: Update user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 minLength: 3
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               role:
+ *                 type: string
+ *                 enum: [admin, user, manager]
+ *               isActive:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       400:
+ *         description: Invalid input data
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Access denied
+ *       404:
+ *         description: User not found
+ */
 router.put(
   '/:userId',
   auth,
@@ -59,7 +190,31 @@ router.put(
   userController.updateUser
 );
 
-// Delete user (admin only)
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   delete:
+ *     summary: Delete user (Admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Not admin role
+ *       404:
+ *         description: User not found
+ */
 router.delete(
   '/:userId',
   auth,

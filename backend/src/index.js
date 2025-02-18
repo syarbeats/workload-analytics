@@ -1,9 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
 const connectDB = require('./config/database');
+const swaggerSpec = require('./config/swagger');
 
-// Import routes (will create these next)
+// Import routes
 const authRoutes = require('./routes/auth');
 const workloadRoutes = require('./routes/workload');
 const userRoutes = require('./routes/users');
@@ -16,6 +18,15 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  swaggerOptions: {
+    persistAuthorization: true,
+  },
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "Workload Analytics API Documentation"
+}));
 
 // Routes
 app.use('/api/auth', authRoutes);

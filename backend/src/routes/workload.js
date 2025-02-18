@@ -73,8 +73,56 @@ const dateRangeValidation = [
     .withMessage('Invalid end date format')
 ];
 
-// Routes
-// Create workload entry
+/**
+ * @swagger
+ * /api/workload:
+ *   post:
+ *     summary: Create a new workload entry
+ *     tags: [Workload]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - project
+ *               - taskName
+ *               - taskType
+ *               - hoursSpent
+ *               - date
+ *               - status
+ *               - priority
+ *             properties:
+ *               project:
+ *                 type: string
+ *               taskName:
+ *                 type: string
+ *               taskType:
+ *                 type: string
+ *                 enum: [development, bug-fix, review, meeting, documentation, other]
+ *               hoursSpent:
+ *                 type: number
+ *                 minimum: 0
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               status:
+ *                 type: string
+ *                 enum: [planned, in-progress, completed, blocked]
+ *               priority:
+ *                 type: string
+ *                 enum: [high, medium, low]
+ *     responses:
+ *       201:
+ *         description: Workload entry created successfully
+ *       400:
+ *         description: Invalid input data
+ *       401:
+ *         description: Not authorized
+ */
 router.post(
   '/',
   auth,
@@ -82,14 +130,69 @@ router.post(
   workloadController.createWorkload
 );
 
-// Get workload entries with filtering
+/**
+ * @swagger
+ * /api/workload:
+ *   get:
+ *     summary: Get workload entries with optional filtering
+ *     tags: [Workload]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: project
+ *         schema:
+ *           type: string
+ *         description: Filter by project name
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [planned, in-progress, completed, blocked]
+ *         description: Filter by status
+ *     responses:
+ *       200:
+ *         description: List of workload entries
+ *       401:
+ *         description: Not authorized
+ */
 router.get(
   '/',
   auth,
   workloadController.getWorkloads
 );
 
-// Get workload statistics
+/**
+ * @swagger
+ * /api/workload/stats:
+ *   get:
+ *     summary: Get workload statistics
+ *     tags: [Workload]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date for statistics
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date for statistics
+ *     responses:
+ *       200:
+ *         description: Workload statistics
+ *       400:
+ *         description: Invalid date range
+ *       401:
+ *         description: Not authorized
+ */
 router.get(
   '/stats',
   auth,
@@ -97,7 +200,37 @@ router.get(
   workloadController.getWorkloadStats
 );
 
-// Get project summary
+/**
+ * @swagger
+ * /api/workload/project-summary:
+ *   get:
+ *     summary: Get project summary
+ *     tags: [Workload]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date for summary
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date for summary
+ *     responses:
+ *       200:
+ *         description: Project summary data
+ *       400:
+ *         description: Invalid date range
+ *       401:
+ *         description: Not authorized
+ */
 router.get(
   '/project-summary',
   auth,
@@ -105,7 +238,57 @@ router.get(
   workloadController.getProjectSummary
 );
 
-// Update workload entry
+/**
+ * @swagger
+ * /api/workload/{id}:
+ *   put:
+ *     summary: Update a workload entry
+ *     tags: [Workload]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Workload entry ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               project:
+ *                 type: string
+ *               taskName:
+ *                 type: string
+ *               taskType:
+ *                 type: string
+ *                 enum: [development, bug-fix, review, meeting, documentation, other]
+ *               hoursSpent:
+ *                 type: number
+ *                 minimum: 0
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               status:
+ *                 type: string
+ *                 enum: [planned, in-progress, completed, blocked]
+ *               priority:
+ *                 type: string
+ *                 enum: [high, medium, low]
+ *     responses:
+ *       200:
+ *         description: Workload entry updated successfully
+ *       400:
+ *         description: Invalid input data
+ *       401:
+ *         description: Not authorized
+ *       404:
+ *         description: Workload entry not found
+ */
 router.put(
   '/:id',
   auth,
@@ -113,7 +296,29 @@ router.put(
   workloadController.updateWorkload
 );
 
-// Delete workload entry
+/**
+ * @swagger
+ * /api/workload/{id}:
+ *   delete:
+ *     summary: Delete a workload entry
+ *     tags: [Workload]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Workload entry ID
+ *     responses:
+ *       200:
+ *         description: Workload entry deleted successfully
+ *       401:
+ *         description: Not authorized
+ *       404:
+ *         description: Workload entry not found
+ */
 router.delete(
   '/:id',
   auth,
