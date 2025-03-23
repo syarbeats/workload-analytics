@@ -40,7 +40,7 @@ A comprehensive dashboard for monitoring and analyzing developer workload, featu
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/workload-analytics.git
+git clone https://github.com/syarbeats/workload-analytics.git
 cd workload-analytics
 ```
 
